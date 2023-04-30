@@ -98,6 +98,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
         } else {
             answerLabel.text = "?"
         }
+        
+        // Segmented control
+        modeSelector.selectedSegmentIndex = 0
     } // This method is supposed to answer the question "For the current state of the app, how the UI should look?"
     
     
@@ -128,8 +131,14 @@ class ViewController: UIViewController, UITextFieldDelegate {
             }
         case .score:
             answerLabel.text = ""
-            print("Your score is \(correctAnswerCount) out of \(elementList.count).")
         }
+        
+        // Score display
+        if state == .score {
+            displayScoreAlert()
+        }
+        
+        modeSelector.selectedSegmentIndex = 1
     }
         
         
@@ -178,7 +187,21 @@ class ViewController: UIViewController, UITextFieldDelegate {
             return true
         }
         
+    func displayScoreAlert() {
+        let alert = UIAlertController(title: "Quiz Score",
+                                      message: "Your score is \(correctAnswerCount) out of \(elementList.count)" ,
+                                      preferredStyle: .alert) // This creates a new alert.
+        let dismissAction = UIAlertAction(title: "OK",
+                                          style: .default,
+                                          handler: scoreAlertDismissed(_:)) // This describes the button that will go at the bottom.
+        alert.addAction(dismissAction) // Adds the action declared above to the alert also declared above.
         
+        present(alert, animated: true, completion: nil)
+    }
+    
+    func scoreAlertDismissed(_ action: UIAlertAction) {
+        mode = .flashCard
+    }
         
         
         
