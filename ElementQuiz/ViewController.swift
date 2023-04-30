@@ -15,7 +15,7 @@ class ViewController: UIViewController {
     
     
 // MARK: - Properties
-    let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"]
+    let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"] // This array will be used both as a reference for the image files in imageView and text answer in answerLabel.
     var currentElementIndex = 0 // Variable to keep track of the currently selected element.
     
     
@@ -29,10 +29,16 @@ class ViewController: UIViewController {
 // MARK: - IBActions
     
     @IBAction func showAnswer(_ sender: Any) {
+        answerLabel.text = elementList[currentElementIndex]
     }
     
-    
     @IBAction func next(_ sender: Any) {
+        currentElementIndex += 1 // Since we access items in an array by index, we can calculate the value of the next element by adding 1 to the current index.
+        if currentElementIndex >= elementList.count {
+            currentElementIndex = 0
+        } // This if statement prevents the app crashing for going out of range. If the index's number is equal to currentElementIndex, it will simply set it back to 0, causing a loop.
+        
+        updateElement() // After adding 1 to the currentElementIndex, the interface must be updated.
     }
     
     
