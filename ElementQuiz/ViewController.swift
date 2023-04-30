@@ -26,8 +26,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var modeSelector: UISegmentedControl!
     @IBOutlet var textField: UITextField!
     
+    @IBOutlet var showAnswerButton: UIButton!
+    @IBOutlet var nextButton: UIButton!
     
-    // MARK: - Properties
+    
+// MARK: - Properties
     let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"] // This array will be used both as a reference for the image files in imageView and text answer in answerLabel.
     var currentElementIndex = 0 // Variable to keep track of the currently selected element.
     var mode: Mode = .flashCard {
@@ -108,6 +111,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         
         // Segmented control
         modeSelector.selectedSegmentIndex = 0
+        
+        // Buttons
+        showAnswerButton.isHidden = false
+        nextButton.isEnabled = true
+        nextButton.setTitle("Next Element", for: .normal)
     } // This method is supposed to answer the question "For the current state of the app, how the UI should look?"
     
     
@@ -117,9 +125,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
         textField.isHidden = false
         switch state {
         case . question:
+            textField.isEnabled = true
             textField.text = ""
             textField.becomeFirstResponder()
         case .answer:
+            textField.isEnabled = false
             textField.resignFirstResponder()
         case .score:
             textField.isHidden = true
@@ -134,7 +144,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
             if answerIsCorrect {
                 answerLabel.text = "Correct!"
             } else {
-                answerLabel.text = "❌"
+                answerLabel.text = "❌\n Correct Answer: " + elementName
             }
         case .score:
             answerLabel.text = ""
@@ -146,6 +156,24 @@ class ViewController: UIViewController, UITextFieldDelegate {
         }
         
         modeSelector.selectedSegmentIndex = 1
+        
+        // Buttons
+        showAnswerButton.isHidden = true
+        if currentElementIndex == elementList.count - 1 {
+            nextButton.setTitle("Show Score", for: .normal)
+        } else {
+            nextButton.setTitle("Next Question", for: .normal)
+        }
+        
+        switch state {
+        case .question:
+            nextButton.isEnabled = false
+        case .answer:
+            nextButton.isEnabled = true
+        case .score:
+            nextButton.isEnabled = false
+        }
+        
     }
         
         
