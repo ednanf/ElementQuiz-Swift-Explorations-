@@ -32,6 +32,13 @@ class ViewController: UIViewController, UITextFieldDelegate {
     var currentElementIndex = 0 // Variable to keep track of the currently selected element.
     var mode: Mode = .flashCard {
         didSet {
+            switch mode {
+            case .flashCard:
+                setupFlashCards()
+            case .quiz:
+                setupQuiz()
+            }
+            
             updateUI()
         } // didSet is a **property observer** -- Everytime the value of mode is updated, the code in didSet block will run.
     } // This variable holds the information if the app is either in flashCard or quiz modes.
@@ -186,7 +193,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
             
             return true
         }
-        
+    
+    
+    // Score alert
     func displayScoreAlert() {
         let alert = UIAlertController(title: "Quiz Score",
                                       message: "Your score is \(correctAnswerCount) out of \(elementList.count)" ,
@@ -199,11 +208,26 @@ class ViewController: UIViewController, UITextFieldDelegate {
         present(alert, animated: true, completion: nil)
     }
     
+    // Score alert dismiss
     func scoreAlertDismissed(_ action: UIAlertAction) {
         mode = .flashCard
     }
-        
-        
+    
+    
+    // Sets up a new flash card session.
+    func setupFlashCards() {
+        state = .question
+        currentElementIndex = 0
+    }
+    
+    
+    // Sets up a new quiz.
+    func setupQuiz() {
+        state = .question
+        currentElementIndex = 0
+        answerIsCorrect = false
+        correctAnswerCount = 0
+    }
         
         
         
