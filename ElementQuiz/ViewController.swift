@@ -38,7 +38,7 @@ class ViewController: UIViewController {
             currentElementIndex = 0
         } // This if statement prevents the app crashing for going out of range. If the index's number is equal to currentElementIndex, it will simply set it back to 0, causing a loop.
         
-        updateElement() // After adding 1 to the currentElementIndex, the interface must be updated.
+        updateElement() // After adding 1 to the currentElementIndex, the interface must be updated. 
     }
     
     
