@@ -17,23 +17,27 @@ enum State {
     case answer
 }
 
-class ViewController: UIViewController {
-
-// MARK: - IBOutlets
+class ViewController: UIViewController, UITextFieldDelegate {
+    
+    // MARK: - IBOutlets
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var answerLabel: UILabel!
     @IBOutlet var modeSelector: UISegmentedControl!
     @IBOutlet var textField: UITextField!
     
     
-// MARK: - Properties
+    // MARK: - Properties
     let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"] // This array will be used both as a reference for the image files in imageView and text answer in answerLabel.
     var currentElementIndex = 0 // Variable to keep track of the currently selected element.
     var mode: Mode = .flashCard // This variable holds the information if the app is either in flashCard or quiz modes.
     var state: State = .question // This variable holds the information if the app is either showing the question or the answer in answerLabel.
     
+    // Quiz-specific state
+    var answerIsCorrect = false
+    var correctAnswerCount = 0
     
-// MARK: - Setup
+    
+    // MARK: - Setup
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -41,7 +45,7 @@ class ViewController: UIViewController {
     }
     
     
-// MARK: - IBActions
+    // MARK: - IBActions
     
     @IBAction func showAnswer(_ sender: Any) {
         state = .answer // When the button showAnswer is pressed, set the State to .answer.
@@ -61,7 +65,7 @@ class ViewController: UIViewController {
     }
     
     
-// MARK: - Functions
+    // MARK: - Functions
     
     // Updates the app's UI in flash card mode.
     func updateFlashCardUI() {
@@ -76,32 +80,72 @@ class ViewController: UIViewController {
         }
     } // This method is supposed to answer the question "For the current state of the app, how the UI should look?"
     
+    
+    
     // Updates the app's UI in quiz mode.
     func updateQuizUI() {
-        
-    }
-    
-    // Updates the app's UI based on its mode and state.
-    func updateUI() {
-        switch mode {
-        case .flashCard:
-            updateFlashCardUI()
-        case .quiz:
-            updateQuizUI()
+        switch state {
+        case .question:
+            answerLabel.text = "" // If the quiz is asking a question, the answer label should be blank
+        case .answer:
+            if answerIsCorrect {
+                answerLabel.text = "Correct!"
+            } else {
+                answerLabel.text = "❌"
+            }
         }
-    } // The only method that should ever call updateFlashCardUI (and updateQuizUI) should be updateUI. All other methods will rely on updateUI when they make changes to the interface.
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    }
+        
+        
+        // Updates the app's UI based on its mode and state.
+        func updateUI() {
+            switch mode {
+            case .flashCard:
+                updateFlashCardUI()
+            case .quiz:
+                updateQuizUI()
+            }
+        } // The only method that should ever call updateFlashCardUI (and updateQuizUI) should be updateUI. All other methods will rely on updateUI when they make changes to the interface.
+        
+        
+        // Runs after the user hits the Return Key on the keyboard
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            // Get the text from the text field
+            let textFieldContents = textField.text!
+            
+            // Determine whether the user answered correctly and update appropriate quiz
+            // state
+            if textFieldContents.lowercased() == elementList[currentElementIndex].lowercased() {
+                answerIsCorrect = true
+                correctAnswerCount += 1
+            } else {
+                answerIsCorrect = false
+            }
+            
+            // For debugging purposes
+            // if answerIsCorrect {
+            //     print("CORRECT")
+            // } else {
+            //     print("WRONG")
+            // }
+           
+            // The app should now display the answer to the user
+            state = .answer
+            
+            updateUI()
+            
+            return true
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 }
