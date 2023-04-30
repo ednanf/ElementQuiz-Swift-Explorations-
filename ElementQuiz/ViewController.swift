@@ -8,7 +8,11 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+// MARK: - IBOutlets
+    @IBOutlet var imageView: UIImageView!
+    @IBOutlet var answerLabel: UILabel!
+    
+// MARK: - Setup
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
