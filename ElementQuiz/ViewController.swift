@@ -29,7 +29,11 @@ class ViewController: UIViewController, UITextFieldDelegate {
     // MARK: - Properties
     let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"] // This array will be used both as a reference for the image files in imageView and text answer in answerLabel.
     var currentElementIndex = 0 // Variable to keep track of the currently selected element.
-    var mode: Mode = .flashCard // This variable holds the information if the app is either in flashCard or quiz modes.
+    var mode: Mode = .flashCard {
+        didSet {
+            updateUI()
+        } // didSet is a **property observer** -- Everytime the value of mode is updated, the code in didSet block will run.
+    } // This variable holds the information if the app is either in flashCard or quiz modes.
     var state: State = .question // This variable holds the information if the app is either showing the question or the answer in answerLabel.
     
     // Quiz-specific state
@@ -65,14 +69,25 @@ class ViewController: UIViewController, UITextFieldDelegate {
     }
     
     
+    
+    @IBAction func switchModes(_ sender: Any) {
+        if modeSelector.selectedSegmentIndex == 0 {
+            mode = .flashCard
+        } else {
+            mode = .quiz
+        }
+    }
+    
+    
     // MARK: - Functions
     
     // Updates the app's UI in flash card mode.
-    func updateFlashCardUI() {
-        let elementName = elementList[currentElementIndex] // This constant accesses the element name from the list using the currentElementIndex property as the index.
-        let image = UIImage(named: elementName) // This line creates a new UIImage instance by looking for an image in the Asset Catalog with a matching name.
-        imageView.image = image // This line sets the image of the image view to the newly created image instance.
+    func updateFlashCardUI(elementName: String) {
+        // Text field and keyboard
+        textField.isHidden = true
+        textField.resignFirstResponder()
         
+        // Answer label
         if state == .answer {
             answerLabel.text = elementName
         } else {
@@ -81,9 +96,19 @@ class ViewController: UIViewController, UITextFieldDelegate {
     } // This method is supposed to answer the question "For the current state of the app, how the UI should look?"
     
     
-    
     // Updates the app's UI in quiz mode.
-    func updateQuizUI() {
+    func updateQuizUI(elementName: String) {
+        // Text field and keyboard
+        textField.isHidden = false
+        switch state {
+        case . question:
+            textField.text = ""
+            textField.becomeFirstResponder()
+        case .answer:
+            textField.resignFirstResponder()
+        }
+        
+        // Answer label
         switch state {
         case .question:
             answerLabel.text = "" // If the quiz is asking a question, the answer label should be blank
@@ -99,11 +124,16 @@ class ViewController: UIViewController, UITextFieldDelegate {
         
         // Updates the app's UI based on its mode and state.
         func updateUI() {
+            let elementName = elementList[currentElementIndex] // This constant accesses the element name from the list using the currentElementIndex property as the index.
+            let image = UIImage(named: elementName) // This line creates a new UIImage instance by looking for an image in the Asset Catalog with a matching name.
+            
+            imageView.image = image // This line sets the image of the image view to the newly created image instance.
+            
             switch mode {
             case .flashCard:
-                updateFlashCardUI()
+                updateFlashCardUI(elementName: elementName)
             case .quiz:
-                updateQuizUI()
+                updateQuizUI(elementName: elementName)
             }
         } // The only method that should ever call updateFlashCardUI (and updateQuizUI) should be updateUI. All other methods will rely on updateUI when they make changes to the interface.
         
