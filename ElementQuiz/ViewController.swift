@@ -15,6 +15,7 @@ enum Mode {
 enum State {
     case question
     case answer
+    case score
 }
 
 class ViewController: UIViewController, UITextFieldDelegate {
@@ -59,15 +60,19 @@ class ViewController: UIViewController, UITextFieldDelegate {
     
     @IBAction func next(_ sender: Any) {
         currentElementIndex += 1 // Since we access items in an array by index, we can calculate the value of the next element by adding 1 to the current index.
-        if currentElementIndex == elementList.count {
+        if currentElementIndex >= elementList.count {
             currentElementIndex = 0
-        } // This if statement prevents the app crashing for going out of range. If the index's number is equal to currentElementIndex, it will simply set it back to 0, causing a loop.
+            if mode == .quiz {
+                state = .score
+                updateUI()
+                return
+            }
+        }
         
         state = .question // When the next button is pressed, set the State to .question (returning from .answer which the user most likely pressed).
         
         updateUI() // After adding 1 to the currentElementIndex, the interface must be updated.
     }
-    
     
     
     @IBAction func switchModes(_ sender: Any) {
@@ -106,6 +111,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
             textField.becomeFirstResponder()
         case .answer:
             textField.resignFirstResponder()
+        case .score:
+            textField.isHidden = true
+            textField.resignFirstResponder()
         }
         
         // Answer label
@@ -118,6 +126,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
             } else {
                 answerLabel.text = "❌"
             }
+        case .score:
+            answerLabel.text = ""
+            print("Your score is \(correctAnswerCount) out of \(elementList.count).")
         }
     }
         
