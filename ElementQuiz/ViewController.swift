@@ -20,6 +20,7 @@ enum State {
 
 class ViewController: UIViewController, UITextFieldDelegate {
     
+    
     // MARK: - IBOutlets
     @IBOutlet var imageView: UIImageView!
     @IBOutlet var answerLabel: UILabel!
@@ -30,8 +31,9 @@ class ViewController: UIViewController, UITextFieldDelegate {
     @IBOutlet var nextButton: UIButton!
     
     
-// MARK: - Properties
-    let elementList = ["Carbon", "Gold", "Chlorine", "Sodium"] // This array will be used both as a reference for the image files in imageView and text answer in answerLabel.
+    // MARK: - Properties
+    var elementList: [String] = []
+    let fixedElementList = ["Carbon", "Gold", "Chlorine", "Sodium"] // This is necessary to have the same order always in flash card mode!
     var currentElementIndex = 0 // Variable to keep track of the currently selected element.
     var mode: Mode = .flashCard {
         didSet {
@@ -56,7 +58,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        updateUI()
+        mode = .flashCard
     }
     
     
@@ -100,7 +102,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     func updateFlashCardUI(elementName: String) {
         // Text field and keyboard
         textField.isHidden = true
-        textField.resignFirstResponder()
+        textField.resignFirstResponder() // Hides the keyboard.
         
         // Answer label
         if state == .answer {
@@ -246,6 +248,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
     func setupFlashCards() {
         state = .question
         currentElementIndex = 0
+        elementList = fixedElementList
     }
     
     
@@ -255,6 +258,7 @@ class ViewController: UIViewController, UITextFieldDelegate {
         currentElementIndex = 0
         answerIsCorrect = false
         correctAnswerCount = 0
+        elementList = fixedElementList.shuffled()
     }
         
         
